@@ -1,0 +1,64 @@
+id: PTL-004
+title: Run key persistence to a user-writable path
+technique: T1547.001
+tactic: persistence
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - e55be3fd-3521-4610-9d1a-e210e42dcf05
+preconditions:
+  - Sysmon is installed with registry value-set logging (events 13 and 14).
+  - The Run key value points to a benign placeholder path; nothing is actually executed at logon.
+procedure:
+  - name: Add a Run value
+    description: Write a value under the current user's Run key pointing to a benign placeholder in a user-writable
+      directory. The entry is removed during cleanup before any logon occurs.
+    command: reg.exe add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v PTL-004 /t REG_SZ /d "%TEMP%\p.cmd"
+      /f
+    shell: cmd
+    elevation_required: false
+detection_strategies:
+  - DET0365
+telemetry:
+  - source: Sysmon
+    event_id: 13
+    data_component: DC0063
+    signal: Registry value set under the CurrentVersion\Run key with a value in a user-writable path.
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for reg.exe performing the add operation.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/registry_set/registry_set_win_run_key_suspicious_target.yml
+    techniques:
+      - T1547.001
+    coverage: expected-match
+    note: The Run key path and a target under %TEMP% match the key and user-writable-path selections.
+  - repository: detection-rules
+    path: rules/yara/registry_run_key_persistence_command.yar
+    techniques:
+      - T1547.001
+    coverage: partial
+    note: Matches only when the reg.exe add command is captured in a script or log file on disk.
+mitigations: []
+hardening:
+  - Baseline autostart entries and alert on new Run values pointing to user-writable paths.
+  - Collect Sysmon registry events (13 and 14) for the Run and RunOnce keys.
+  - Restrict who can write to the directories referenced by autostart entries.
+cleanup:
+  - reg.exe delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v PTL-004 /f
+references:
+  - title: ATT&CK technique T1547.001
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1547/001/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: Sysmon
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+  - title: reg add
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/reg-add

@@ -1,0 +1,73 @@
+id: PTL-002
+title: Certutil download from the lab web server
+technique: T1105
+tactic: command-and-control
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - dd3b61dd-7bbc-48cd-ab51-49ad1a776df0
+preconditions:
+  - An isolated web server inside the lab serves a benign file over HTTP at files.lab.test.
+  - Sysmon is installed with process creation (event 1) and network connection (event 3) logging.
+procedure:
+  - name: Download a benign file with certutil
+    description: Use certutil's -urlcache verb to fetch a benign text file from the isolated lab web server. No
+      code is executed; the file is only written to disk.
+    command: certutil.exe -urlcache -split -f http://files.lab.test/benign.txt %TEMP%\ptl-002.txt
+    shell: cmd
+    elevation_required: false
+detection_strategies:
+  - DET0060
+telemetry:
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for certutil.exe with -urlcache and an http URL in the command line.
+  - source: Sysmon
+    event_id: 3
+    data_component: DC0082
+    signal: Outbound network connection from certutil.exe to the lab web server.
+  - source: Sysmon
+    event_id: 11
+    data_component: DC0039
+    signal: File creation of the downloaded file in the temp directory.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/process_creation/proc_creation_win_certutil_url_download.yml
+    techniques:
+      - T1105
+    coverage: expected-match
+    note: certutil.exe with -urlcache and an http URL matches all three selections.
+  - repository: detection-rules
+    path: rules/yara/certutil_download_or_decode_command.yar
+    techniques:
+      - T1105
+    coverage: partial
+    note: The YARA rule matches the command only if it is saved to a script or log file.
+mitigations:
+  - id: M1031
+    name: Network Intrusion Prevention
+    description: Inspect and block tool-transfer patterns at the network boundary.
+  - id: M1037
+    name: Filter Network Traffic
+    description: Restrict outbound HTTP from servers and workstations to an allowlist of proxies.
+hardening:
+  - Route outbound web traffic through a logging proxy and deny direct egress from endpoints.
+  - Alert on LOLBins such as certutil making outbound connections.
+  - Where certutil is not needed for PKI tasks, restrict it with application control.
+cleanup:
+  - Delete %TEMP%\ptl-002.txt if it was created.
+references:
+  - title: ATT&CK technique T1105
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1105/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: certutil
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/certutil
+  - title: Certutil (LOLBAS)
+    publisher: LOLBAS Project
+    url: https://lolbas-project.github.io/lolbas/Binaries/Certutil/

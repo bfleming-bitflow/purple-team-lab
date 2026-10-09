@@ -1,0 +1,82 @@
+id: PTL-003
+title: LSASS memory read via comsvcs.dll MiniDump
+technique: T1003.001
+tactic: credential-access
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - 2536dee2-12fb-459a-8c37-971844fa73be
+preconditions:
+  - Sysmon is installed with process access logging (event 10) configured to include lsass.exe as a target.
+  - The operator runs from an elevated prompt on a dedicated lab host.
+  - The dump file is treated as sensitive and deleted during cleanup.
+procedure:
+  - name: Create an LSASS minidump with comsvcs.dll
+    description: Invoke the MiniDump export of the built-in comsvcs.dll through rundll32 to write a memory dump
+      of LSASS. This is the public atomic procedure; the dump is deleted in cleanup and never leaves the lab.
+    command: rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump (Get-Process lsass).Id $env:TEMP\ptl-003.dmp
+      full
+    shell: powershell
+    elevation_required: true
+detection_strategies:
+  - DET0363
+telemetry:
+  - source: Sysmon
+    event_id: 10
+    data_component: DC0035
+    signal: Process access to lsass.exe with a GrantedAccess mask that allows memory read.
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for rundll32.exe referencing comsvcs.dll and MiniDump.
+  - source: Sysmon
+    event_id: 11
+    data_component: DC0039
+    signal: File creation of the dump file.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/process_access/proc_access_win_lsass_memory_read_access.yml
+    techniques:
+      - T1003.001
+    coverage: partial
+    note: Matches only if the GrantedAccess mask observed for rundll32.exe is one of the masks the rule lists and
+      Sysmon event 10 is collected for lsass.exe. Record the observed mask during the exercise.
+  - repository: detection-rules
+    path: rules/yara/lsass_memory_dump_command.yar
+    techniques:
+      - T1003.001
+    coverage: partial
+    note: Matches only when the MiniDump command line is captured in a script or log file on disk.
+mitigations:
+  - id: M1043
+    name: Credential Access Protection
+    description: Enable LSA protection (RunAsPPL) and Credential Guard to block memory reads of LSASS.
+  - id: M1040
+    name: Behavior Prevention on Endpoint
+    description: Enable the Microsoft Defender ASR rule that blocks process access to LSASS for credential theft.
+  - id: M1026
+    name: Privileged Account Management
+    description: Limit local administrator rights so that fewer accounts can read process memory.
+hardening:
+  - Enable LSA protection (RunAsPPL) and, where hardware allows, Credential Guard.
+  - Enable the Microsoft Defender attack surface reduction rule for LSASS credential theft.
+  - Collect Sysmon event 10 for lsass.exe and alert on non-system readers.
+cleanup:
+  - Delete $env:TEMP\ptl-003.dmp immediately after confirming the telemetry.
+references:
+  - title: ATT&CK technique T1003.001
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1003/001/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: Sysmon
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon
+  - title: comsvcs (LOLBAS)
+    publisher: LOLBAS Project
+    url: https://lolbas-project.github.io/lolbas/Libraries/comsvcs/
+  - title: Configuring additional LSA protection
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/windows-server/security/credentials-protection-and-management/configuring-additional-lsa-protection

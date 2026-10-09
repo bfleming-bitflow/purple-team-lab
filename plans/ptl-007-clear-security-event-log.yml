@@ -1,0 +1,64 @@
+id: PTL-007
+title: Windows event log cleared with wevtutil
+technique: T1685.005
+tactic: defense-impairment
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - e6abb60e-26b8-41da-8aae-0c35174b0967
+preconditions:
+  - Run on a dedicated lab host where clearing the Security log is acceptable.
+  - Security events are forwarded to the lab collector before the test, so prior events and event 1102 survive off-host.
+  - The operator runs from an elevated prompt.
+procedure:
+  - name: Clear the Security event log
+    description: Clear the Security channel, which records event 1102. Clearing other channels does not produce
+      1102. Logs must already be forwarded so that nothing is lost from the collector.
+    command: wevtutil.exe cl Security
+    shell: cmd
+    elevation_required: true
+detection_strategies:
+  - DET0532
+telemetry:
+  - source: Security
+    event_id: 1102
+    data_component: DC0038
+    signal: The audit log was cleared; recorded in the Security channel and on the SIEM collector.
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for wevtutil.exe with the 'cl' or 'clear-log' verb.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/process_creation/proc_creation_win_wevtutil_clear_log.yml
+    techniques:
+      - T1685.005
+    coverage: expected-match
+    note: wevtutil.exe with the 'cl' verb matches the image and command-line selections.
+mitigations:
+  - id: M1029
+    name: Remote Data Storage
+    description: Forward logs to a central collector so cleared events remain available off-host.
+  - id: M1022
+    name: Restrict File and Directory Permissions
+    description: Restrict permissions on event log files so fewer accounts can clear them.
+hardening:
+  - Forward Windows event logs to a SIEM in near real time.
+  - Alert on event 1102 and on wevtutil clear commands.
+  - Restrict the accounts permitted to clear event logs.
+cleanup:
+  - No cleanup restores a cleared log. Confirm the 1102 event is present on the collector and note the test window.
+references:
+  - title: ATT&CK technique T1685.005
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1685/005/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: wevtutil
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/wevtutil
+  - title: '1102(S): The audit log was cleared'
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-1102

@@ -1,0 +1,84 @@
+id: PTL-001
+title: Encoded PowerShell command execution (benign marker)
+technique: T1027.010
+additional_techniques:
+  - T1059.001
+tactic: stealth
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - a50d5a97-2531-499e-a1de-5544c74432c6
+  - a538de64-1c74-46ed-aa60-b995ed302598
+preconditions:
+  - PowerShell Script Block Logging is enabled (event 4104).
+  - Sysmon is installed with process creation logging (event 1).
+  - Command-line auditing is enabled so Security 4688 records the full command line.
+procedure:
+  - name: Run a Base64-encoded command
+    description: Launch PowerShell with -EncodedCommand and a UTF-16LE Base64 payload that only writes a benign
+      marker file under %TEMP%.
+    command: powershell.exe -EncodedCommand cwBjACAAJABlAG4AdgA6AFQARQBNAFAAXABwAC4AdAB4AHQAIABQAFQATAAtADAAMAAxAA==
+    shell: cmd
+    elevation_required: false
+detection_strategies:
+  - DET0505
+  - DET0455
+telemetry:
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for powershell.exe with an -EncodedCommand argument in the command line.
+  - source: PowerShell
+    event_id: 4104
+    data_component: DC0064
+    signal: Script block logging records the decoded Set-Content command.
+  - source: Security
+    event_id: 4688
+    data_component: DC0032
+    signal: Process creation auditing captures the encoded command line when command-line auditing is on.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/process_creation/proc_creation_win_powershell_encoded_command.yml
+    techniques:
+      - T1027.010
+      - T1059.001
+    coverage: expected-match
+    note: The -EncodedCommand switch and PowerShell image match the rule's selections.
+  - repository: detection-rules
+    path: rules/yara/powershell_encoded_command_launcher.yar
+    techniques:
+      - T1027.010
+      - T1059.001
+    coverage: partial
+    note: The YARA rule matches a launcher script or shortcut on disk; this plan runs the command directly, so the
+      rule applies only if the launcher is written to a file.
+mitigations:
+  - id: M1049
+    name: Antivirus/Antimalware
+    description: AMSI-enabled antimalware can inspect decoded PowerShell before execution.
+  - id: M1040
+    name: Behavior Prevention on Endpoint
+    description: Block or alert on encoded-command launchers through endpoint behaviour rules.
+  - id: M1038
+    name: Execution Prevention
+    description: Use WDAC or AppLocker with Constrained Language Mode to limit arbitrary PowerShell.
+hardening:
+  - Enable Script Block Logging and Module Logging through Group Policy on all Windows hosts in the lab.
+  - Enable process command-line auditing (Security 4688 with command line) so SIEM sees the encoded argument.
+  - Apply PowerShell Constrained Language Mode where interactive scripting is not required.
+cleanup:
+  - Delete %TEMP%\ptl-001.txt if it was created.
+references:
+  - title: ATT&CK technique T1027.010
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1027/010/
+  - title: ATT&CK technique T1059.001
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1059/001/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: about_Logging_Windows
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging_windows

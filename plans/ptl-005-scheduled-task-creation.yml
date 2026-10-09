@@ -1,0 +1,66 @@
+id: PTL-005
+title: Scheduled task creation with a suspicious action
+technique: T1053.005
+tactic: persistence
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - 42f53695-ad4a-4546-abb6-7d837f644a71
+preconditions:
+  - Security auditing for 'Other Object Access Events' is enabled so event 4698 is recorded.
+  - Sysmon process creation logging (event 1) is enabled.
+procedure:
+  - name: Create a one-time scheduled task
+    description: Create a task that launches a benign placeholder command from a user-writable path. The task is
+      deleted in cleanup before its start time.
+    command: schtasks.exe /create /sc once /tn PTL-005 /tr "%TEMP%\ptl-005-benign.cmd" /st 23:59 /f
+    shell: cmd
+    elevation_required: false
+detection_strategies:
+  - DET0441
+telemetry:
+  - source: Security
+    event_id: 4698
+    data_component: DC0001
+    signal: A scheduled task was created; the event records the task action and path.
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for schtasks.exe with /create and an action in a user-writable path.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/process_creation/proc_creation_win_schtasks_create_suspicious_action.yml
+    techniques:
+      - T1053.005
+    coverage: expected-match
+    note: schtasks.exe with /create and a %TEMP% action matches the image, create and action selections.
+mitigations:
+  - id: M1047
+    name: Audit
+    description: Audit scheduled task creation (event 4698) and review new tasks.
+  - id: M1028
+    name: Operating System Configuration
+    description: Restrict task creation to administrators through the task scheduler configuration.
+  - id: M1018
+    name: User Account Management
+    description: Limit which accounts can register scheduled tasks.
+hardening:
+  - Enable auditing for scheduled task creation and forward event 4698 to the SIEM.
+  - Alert on tasks whose action runs from a user-writable directory or a script interpreter.
+  - Review scheduled tasks against a known-good baseline.
+cleanup:
+  - schtasks.exe /delete /tn PTL-005 /f
+references:
+  - title: ATT&CK technique T1053.005
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1053/005/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: schtasks create
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtasks-create
+  - title: '4698(S): A scheduled task was created'
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4698

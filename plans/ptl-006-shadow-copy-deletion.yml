@@ -1,0 +1,66 @@
+id: PTL-006
+title: Shadow copy deletion with vssadmin
+technique: T1490
+tactic: impact
+platforms:
+  - Windows
+authorization_required: true
+atomic_tests:
+  - 43819286-91a9-4369-90ed-d31fb4da2c01
+preconditions:
+  - Run on a dedicated lab host where losing volume shadow copies is acceptable.
+  - Sysmon process creation logging (event 1) is enabled.
+  - The operator runs from an elevated prompt.
+procedure:
+  - name: Delete volume shadow copies
+    description: Run vssadmin to delete all shadow copies. This is destructive to local snapshots; run it only on
+      an expendable lab host that can be reverted from a VM checkpoint.
+    command: vssadmin.exe delete shadows /all /quiet
+    shell: cmd
+    elevation_required: true
+detection_strategies:
+  - DET0329
+telemetry:
+  - source: Sysmon
+    event_id: 1
+    data_component: DC0032
+    signal: Process creation for vssadmin.exe with 'delete shadows' in the command line.
+detections:
+  - repository: detection-rules
+    path: rules/sigma/windows/process_creation/proc_creation_win_shadow_copy_deletion.yml
+    techniques:
+      - T1490
+    coverage: expected-match
+    note: vssadmin.exe with 'delete' and 'shadows' matches the vssadmin branch of the rule.
+  - repository: detection-rules
+    path: rules/yara/shadow_copy_deletion_command.yar
+    techniques:
+      - T1490
+    coverage: partial
+    note: Matches only when the vssadmin delete shadows command is captured in a script or log file on disk.
+mitigations:
+  - id: M1053
+    name: Data Backup
+    description: Keep offline, tested backups so recovery does not depend on local shadow copies.
+  - id: M1028
+    name: Operating System Configuration
+    description: Restrict access to backup and recovery utilities.
+  - id: M1038
+    name: Execution Prevention
+    description: Use application control to limit who can run shadow copy tools.
+hardening:
+  - Maintain offline backups that an endpoint compromise cannot reach.
+  - Alert on vssadmin, wmic shadowcopy and wbadmin deletion commands.
+  - Restrict the recovery utilities to administrators via application control.
+cleanup:
+  - Revert the lab host from its VM checkpoint to restore shadow copies if they are needed.
+references:
+  - title: ATT&CK technique T1490
+    publisher: MITRE ATT&CK
+    url: https://attack.mitre.org/techniques/T1490/
+  - title: Atomic Red Team
+    publisher: Red Canary
+    url: https://github.com/redcanaryco/atomic-red-team
+  - title: vssadmin delete shadows
+    publisher: Microsoft
+    url: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/vssadmin-delete-shadows
