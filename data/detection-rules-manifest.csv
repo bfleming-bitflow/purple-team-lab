@@ -1,0 +1,17 @@
+kind,path,rule_id,name,techniques
+sigma,rules/sigma/windows/process_access/proc_access_win_lsass_memory_read_access.yml,424d24a7-57c3-4573-bd13-de3c713b5db1,proc_access_win_lsass_memory_read_access,T1003.001
+sigma,rules/sigma/windows/process_creation/proc_creation_win_certutil_url_download.yml,9f476719-13cd-44c4-a687-cf39cb7f991c,proc_creation_win_certutil_url_download,T1105
+sigma,rules/sigma/windows/process_creation/proc_creation_win_powershell_encoded_command.yml,1c51add2-eb4c-40b4-9adb-3ed271667c6d,proc_creation_win_powershell_encoded_command,T1027.010;T1059.001
+sigma,rules/sigma/windows/process_creation/proc_creation_win_schtasks_create_suspicious_action.yml,eedaee30-cd71-4b88-9506-e3859a69e13b,proc_creation_win_schtasks_create_suspicious_action,T1053.005
+sigma,rules/sigma/windows/process_creation/proc_creation_win_shadow_copy_deletion.yml,de39e83b-29b5-432a-b141-fe35f4ef830f,proc_creation_win_shadow_copy_deletion,T1490
+sigma,rules/sigma/windows/process_creation/proc_creation_win_webserver_spawns_shell.yml,5331856b-cee7-4dc9-a623-35eaad5adf74,proc_creation_win_webserver_spawns_shell,T1505.003
+sigma,rules/sigma/windows/process_creation/proc_creation_win_wevtutil_clear_log.yml,00d9e2bd-123f-4236-8d98-06185068a6e2,proc_creation_win_wevtutil_clear_log,T1685.005
+sigma,rules/sigma/windows/registry_set/registry_set_win_run_key_suspicious_target.yml,39de0477-cadb-4a30-be0f-7a7c8f8f4fd0,registry_set_win_run_key_suspicious_target,T1547.001
+yara,rules/yara/certutil_download_or_decode_command.yar,29bf44e4-26a3-4010-9168-00052568f3a2,Certutil_Download_Or_Decode_Command,T1105;T1140
+yara,rules/yara/lsass_memory_dump_command.yar,2daee922-0d6a-42d3-b92d-598a411ebd18,LSASS_Memory_Dump_Command,T1003.001
+yara,rules/yara/powershell_download_cradle.yar,01b695b2-dde3-4236-948b-964a4501ecaa,PowerShell_Download_Cradle,T1059.001;T1105
+yara,rules/yara/powershell_encoded_command_launcher.yar,ec0b91c1-1b82-4cf0-8f44-60909dd0d5a2,PowerShell_Encoded_Command_Launcher,T1027.010;T1059.001
+yara,rules/yara/registry_run_key_persistence_command.yar,1f23184b-2091-478d-ad93-c6d4348e5dd6,Registry_Run_Key_Persistence_Command,T1547.001
+yara,rules/yara/shadow_copy_deletion_command.yar,17222162-3827-4ebe-b6f7-b7b118cf91dd,Shadow_Copy_Deletion_Command,T1490
+yara,rules/yara/webshell_aspx_process_start_request_input.yar,98c65ede-e3cd-48c2-871a-3a43981d5176,WebShell_ASPX_Process_Start_Request_Input,T1505.003
+yara,rules/yara/webshell_php_eval_request_input.yar,7808643d-4515-4b5b-8708-e1910a71d4cb,WebShell_PHP_Eval_Request_Input,T1505.003

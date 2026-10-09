@@ -1,0 +1,107 @@
+data_component_id,name
+DC0001,Scheduled Job Creation
+DC0002,User Account Authentication
+DC0003,Malware Metadata
+DC0004,Firmware Modification
+DC0005,Scheduled Job Metadata
+DC0006,Web Credential Creation
+DC0007,Web Credential Usage
+DC0008,WMI Creation
+DC0009,User Account Deletion
+DC0010,User Account Modification
+DC0011,Malware Content
+DC0012,Scheduled Job Modification
+DC0013,User Account Metadata
+DC0014,User Account Creation
+DC0015,Image Creation
+DC0016,Module Load
+DC0017,Cloud Storage Enumeration
+DC0018,Host Status
+DC0019,Pod Creation
+DC0020,Process Modification
+DC0021,OS API Execution
+DC0022,Cloud Storage Deletion
+DC0023,Cloud Storage Modification
+DC0024,Cloud Storage Creation
+DC0025,Cloud Storage Access
+DC0026,Image Deletion
+DC0027,Cloud Storage Metadata
+DC0028,Image Metadata
+DC0029,Script Execution
+DC0030,Pod Modification
+DC0031,Kernel Module Load
+DC0032,Process Creation
+DC0033,Process Termination
+DC0034,Process Metadata
+DC0035,Process Access
+DC0036,Image Modification
+DC0037,Pod Enumeration
+DC0038,Application Log Content
+DC0039,File Creation
+DC0040,File Deletion
+DC0041,Service Metadata
+DC0042,Drive Creation
+DC0043,Firewall Disable
+DC0044,Firewall Enumeration
+DC0045,Windows Registry Key Deletion
+DC0046,Drive Modification
+DC0047,Snapshot Enumeration
+DC0048,Named Pipe Metadata
+DC0049,Snapshot Deletion
+DC0050,Windows Registry Key Access
+DC0051,Firewall Rule Modification
+DC0052,Social Media
+DC0053,Firewall Metadata
+DC0054,Drive Access
+DC0055,File Access
+DC0056,Windows Registry Key Creation
+DC0057,Snapshot Creation
+DC0058,Snapshot Modification
+DC0059,File Metadata
+DC0060,Service Creation
+DC0061,File Modification
+DC0062,Snapshot Metadata
+DC0063,Windows Registry Key Modification
+DC0064,Command Execution
+DC0065,Service Modification
+DC0066,Active Directory Object Modification
+DC0067,Logon Session Creation
+DC0068,Active Directory Object Deletion
+DC0069,Cloud Service Modification
+DC0070,Cloud Service Metadata
+DC0071,Active Directory Object Access
+DC0072,Container Creation
+DC0073,Instance Modification
+DC0074,Driver Metadata
+DC0075,Instance Enumeration
+DC0076,Instance Creation
+DC0077,Container Start
+DC0078,Network Traffic Flow
+DC0079,Driver Load
+DC0080,Instance Start
+DC0081,Instance Deletion
+DC0082,Network Connection Creation
+DC0083,Cloud Service Enumeration
+DC0084,Active Directory Credential Request
+DC0085,Network Traffic Content
+DC0086,Instance Metadata
+DC0087,Active Directory Object Creation
+DC0088,Logon Session Metadata
+DC0089,Instance Stop
+DC0090,Cloud Service Disable
+DC0091,Container Enumeration
+DC0092,Volume Modification
+DC0093,Certificate Registration
+DC0094,Group Modification
+DC0095,Volume Enumeration
+DC0096,Passive DNS
+DC0097,Volume Creation
+DC0098,Volume Deletion
+DC0099,Group Enumeration
+DC0100,Volume Metadata
+DC0101,Domain Registration
+DC0102,Network Share Access
+DC0103,Active DNS
+DC0104,Response Content
+DC0105,Group Metadata
+DC0106,Response Metadata

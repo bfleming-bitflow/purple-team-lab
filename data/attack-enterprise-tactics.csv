@@ -1,0 +1,16 @@
+tactic_id,shortname,name
+TA0001,initial-access,Initial Access
+TA0002,execution,Execution
+TA0003,persistence,Persistence
+TA0004,privilege-escalation,Privilege Escalation
+TA0005,stealth,Stealth
+TA0006,credential-access,Credential Access
+TA0007,discovery,Discovery
+TA0008,lateral-movement,Lateral Movement
+TA0009,collection,Collection
+TA0010,exfiltration,Exfiltration
+TA0011,command-and-control,Command and Control
+TA0040,impact,Impact
+TA0042,resource-development,Resource Development
+TA0043,reconnaissance,Reconnaissance
+TA0112,defense-impairment,Defense Impairment
