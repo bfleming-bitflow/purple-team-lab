@@ -10,7 +10,7 @@ authors = [{ name = "Belén Ribera Fleming" }]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers --cov=tools --cov-report=term-missing --cov-fail-under=80"
 
 [tool.ruff]
 line-length = 110
@@ -18,3 +18,12 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.coverage.run]
+branch = false
+source = ["tools"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = false

@@ -44,7 +44,7 @@ jobs:
         run: yamllint -s .
 
       - name: Lint Markdown
-        run: pymarkdown --config .pymarkdown.json scan -r --exclude .github .
+        run: pymarkdown --config .pymarkdown.json scan -r --exclude .github --exclude tests/fixtures .
 
       - name: Validate plans
         run: python tools/validate_plans.py
@@ -53,4 +53,4 @@ jobs:
         run: python tools/render_coverage.py --check
 
       - name: Run tests
-        run: pytest
+        run: pytest --cov=tools --cov-report=term-missing --cov-fail-under=80

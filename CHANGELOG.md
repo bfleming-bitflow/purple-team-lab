@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Changed
+
+- Raise `tools/` test coverage above 80% and enforce the threshold in pytest/CI via
+  `pytest-cov` (`--cov-fail-under=80`).
+
 ## [0.1.0] - 2026-10-09
 
 ### Added

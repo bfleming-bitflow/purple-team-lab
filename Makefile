@@ -22,7 +22,7 @@ lint:
 	$(BIN)/ruff check .
 	$(BIN)/ruff format --check .
 	$(BIN)/yamllint -s .
-	$(BIN)/pymarkdown --config .pymarkdown.json scan -r --exclude .venv --exclude .github .
+	$(BIN)/pymarkdown --config .pymarkdown.json scan -r --exclude .venv --exclude .github --exclude tests/fixtures .
 
 validate:
 	$(BIN)/python tools/validate_plans.py

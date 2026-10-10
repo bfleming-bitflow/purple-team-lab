@@ -1,0 +1,173 @@
+{
+  "type": "bundle",
+  "id": "bundle--test",
+  "objects": [
+    {
+      "type": "x-mitre-collection",
+      "id": "x-mitre-collection--1",
+      "name": "Enterprise ATT&CK",
+      "x_mitre_version": "19.2",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "enterprise-attack"
+        }
+      ]
+    },
+    {
+      "type": "x-mitre-tactic",
+      "id": "x-mitre-tactic--1",
+      "name": "Persistence",
+      "x_mitre_shortname": "persistence",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "TA0003"
+        }
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--live",
+      "name": "Registry Run Keys",
+      "kill_chain_phases": [
+        {
+          "kill_chain_name": "mitre-attack",
+          "phase_name": "persistence"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T1547.001"
+        }
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--revoked",
+      "name": "Revoked Technique",
+      "revoked": true,
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T9999"
+        }
+      ]
+    },
+    {
+      "type": "attack-pattern",
+      "id": "attack-pattern--deprecated",
+      "name": "Deprecated Technique",
+      "x_mitre_deprecated": true,
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "T9998"
+        }
+      ]
+    },
+    {
+      "type": "malware",
+      "id": "malware--1",
+      "name": "DemoMalware",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "S0001"
+        }
+      ]
+    },
+    {
+      "type": "tool",
+      "id": "tool--1",
+      "name": "DemoTool",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "S0002"
+        }
+      ]
+    },
+    {
+      "type": "course-of-action",
+      "id": "course-of-action--1",
+      "name": "Execution Prevention",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "M1038"
+        }
+      ]
+    },
+    {
+      "type": "course-of-action",
+      "id": "course-of-action--not-m",
+      "name": "Not A Mitigation",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "CAPEC-1"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "id": "relationship--mit",
+      "relationship_type": "mitigates",
+      "source_ref": "course-of-action--1",
+      "target_ref": "attack-pattern--live"
+    },
+    {
+      "type": "x-mitre-data-component",
+      "id": "x-mitre-data-component--1",
+      "name": "Process Creation",
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "DC0032"
+        }
+      ]
+    },
+    {
+      "type": "x-mitre-detection-strategy",
+      "id": "x-mitre-detection-strategy--1",
+      "name": "Detect Run Keys",
+      "x_mitre_analytic_refs": [
+        "x-mitre-analytic--1"
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "DET0001"
+        }
+      ]
+    },
+    {
+      "type": "relationship",
+      "id": "relationship--det",
+      "relationship_type": "detects",
+      "source_ref": "x-mitre-detection-strategy--1",
+      "target_ref": "attack-pattern--live"
+    },
+    {
+      "type": "x-mitre-analytic",
+      "id": "x-mitre-analytic--1",
+      "name": "Analytic One",
+      "x_mitre_platforms": [
+        "Windows"
+      ],
+      "x_mitre_log_source_references": [
+        {
+          "x_mitre_data_component_ref": "x-mitre-data-component--1"
+        }
+      ],
+      "external_references": [
+        {
+          "source_name": "mitre-attack",
+          "external_id": "AN0001"
+        }
+      ]
+    }
+  ]
+}
