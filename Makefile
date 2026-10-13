@@ -31,7 +31,7 @@ coverage-check:
 	$(BIN)/python tools/render_coverage.py --check
 
 test:
-	$(BIN)/pytest
+	$(BIN)/pytest --cov=tools --cov-report=term-missing --cov-fail-under=80
 
 attack-check:
 	$(BIN)/python tools/attack_data.py --bundle $(BUNDLE) --check
